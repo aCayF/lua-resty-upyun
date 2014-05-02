@@ -428,7 +428,7 @@ end
 
 
 
-local function _parse_upyun_headers(headers)
+local function _parse_upyun_headers(headers, regex)
     -- return info, err
     if not headers or type(headers) ~= "table" then
         return nil, "missing recieved headers"
@@ -436,7 +436,8 @@ local function _parse_upyun_headers(headers)
 
     local info = {}
     for k, v in pairs(headers) do
-        local m, err = ngx_match(k, [[^x-upyun-file-([\w-]+)$]])
+        
+        local m, err = ngx_match(k, regex)
         if err then
             return nil, "failed to parse upyun headers " .. err
         end
@@ -601,7 +602,7 @@ function _M.upload_file(self, path, gmkerl, option)
         return nil, err
     end
 
-    ret, err = _parse_upyun_headers(ret.headers)
+    ret, err = _parse_upyun_headers(ret.headers, [[^x-upyun-([\w-]+)$]])
     if not ret then
         return nil, err
     end
@@ -659,7 +660,7 @@ function _M.get_fileinfo(self, path)
         return nil, err
     end
 
-    ret, err = _parse_upyun_headers(ret.headers)
+    ret, err = _parse_upyun_headers(ret.headers, [[^x-upyun-file-([\w-]+)$]])
     if not ret then
         return nil, err
     end
