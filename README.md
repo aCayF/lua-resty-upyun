@@ -42,7 +42,7 @@
                             user = "acayf", --授权操作员名称
                             passwd = "testupyun", --操作员密码
                             endpoint = 0, --接入点
-                            author = "U" --认证方式
+                            author = "upyun" --认证方式
                             }
             local upyun = yun:new(config)
 
@@ -62,7 +62,7 @@
 
 接入点有四个值可选：
 
-* **endpoint = 0** ：根据网络条件自动选择接入点
+* **endpoint = 0** ：根据网络条件自动选择接入点(默认值)
 * **endpoint = 1** ：电信接入点
 * **endpoint = 2** ：联通网通接入点
 * **endpoint = 3** ：移动铁通接入点
@@ -76,5 +76,5 @@ _**注：**建议大家根据服务器网络状况，手动设置合理的接入
 
 认证方式有两个值可选：
 
-* **author = "B"** ：HTTP基本认证
-* **author = "U"** ：又拍云签名认证
+* **author = "basic"** ：HTTP基本认证
+* **author = "upyun"** ：又拍云签名认证(默认值)
