@@ -531,6 +531,17 @@ function _M.new(self, config)
     -- file to be uploaded is stored in the request body
     read_body()
     local content = get_body_data()
+    local file = ngx.req.get_body_file()
+    if file then
+        local f, err = io.open(file, "r")
+        if not f then
+            return nil, err
+        end
+
+        content = f:read("*a")
+        f:close()
+    end
+
     --if not content then
     --    return nil, "request body is expected"
     --end
