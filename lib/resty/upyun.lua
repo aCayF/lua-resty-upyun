@@ -505,7 +505,7 @@ function _M.new(self, config)
     local user = config.user
     local passwd = config.passwd
     local endpoint = config.endpoint and tonumber(config.endpoint) + 1 or 1
-    local author = lower(config.author)
+    local author = config.author and lower(config.author) or nil
 
     if not user or type(user) ~= "string" or user == "" then
         return nil, "invalid user"
