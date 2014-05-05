@@ -33,7 +33,6 @@ __DATA__
                             user = "acayf",
                             passwd = "testupyun",
                             endpoint = 0,
-                            author = "U"
                            }
             local upyun = yun:new(config)
 
