@@ -14,6 +14,11 @@ our $HttpConfig = qq{
     resolver \$TEST_NGINX_RESOLVER;
 };
 
+my $infile = "$pwd/t/sample.jpg";
+open my $in, $infile or die "cannot open $infile for reading: $!";
+our $sample_jpg = do { local $/; <$in> };
+close $in;
+
 $ENV{TEST_NGINX_RESOLVER} = '8.8.8.8';
 
 no_long_string();
