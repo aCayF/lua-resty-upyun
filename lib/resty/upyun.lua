@@ -1,6 +1,7 @@
 -- Copyright (C) Lice Pan (aCayF)
 
 local md5 = ngx.md5
+local base64 = ngx.encode_base64
 local http_time = ngx.http_time
 local time_sec = ngx.time
 local tcp = ngx.socket.tcp
@@ -523,7 +524,7 @@ function _M.new(self, config)
     local author_mode = "U"
     if author == "basic" then
         author_mode = "B"
-        author = "Basic " .. md5(user .. ":" .. passwd)
+        author = "Basic " .. base64(user .. ":" .. passwd)
     else
         author = "UpYun " .. user .. ":"
     end
