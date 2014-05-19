@@ -78,3 +78,74 @@ _**注：**建议大家根据服务器网络状况，手动设置合理的接入
 
 * **author = "basic"** ：HTTP基本认证
 * **author = "upyun"** ：又拍云签名认证(默认值)
+
+<a name="上传文件"></a>
+### 上传文件
+
+```lua
+    location /t {
+        content_by_lua '
+            local yun = require "resty.upyun"
+            local config = {
+                            user = "acayf", --授权操作员名称
+                            passwd = "testupyun", --操作员密码
+                            endpoint = 0, --接入点
+                            author = "upyun" --认证方式
+                            }
+            local upyun = yun:new(config)
+
+            local savePath = "/acayf-img/sample.jpg"
+            local gmkerl = nil
+            local options = {
+                             mkdir = true, 
+                             md5 = true, 
+                             secret = "secret", 
+                             otype = "JPG"
+                            }
+            local info, err = upyun:upload_file(savePath, gmkerl, options)
+            if not info then
+                ngx.say("failed to upload image file : " .. err)
+                return
+            end
+        ';
+    }
+```
+
+##### 参数说明
+* `savePath`(必须项，不可为`nil`)，要保存到又拍云存储的具体地址
+  * 比如`/acayf-img/sample.jpg`表示以`sample.jpg`为文件名保存到`/acayf-img`空间下；
+  * 若保存路径为`/sample.jpg`，则表示保存到根目录下，也可以保存到该空间的其他目录下，如`/acayf-img/dir/sample.jpg`；
+  * **注意`savePath`的路径必须是以`/`开始的**，下同。
+* `gmkerl`(非必须项，可为`nil`)，上传图片时，允许直接对图片进行旋转、裁剪、缩略图等操作，具体请参见[图片处理接口](#图片处理接口)
+* `options`(非必须项，可为`nil`)：
+  * `mkdir`，表示当不存在父级目录时是否自动创建父级目录（只支持自动创建10级以内的父级目录）
+  * `md5`，表示上传文件时是否进行文件的`MD5`校验：若又拍云服务端收到的文件MD5值与用户设置的不一致，将返回 `406 Not Acceptable` 错误。
+     对于需要确保上传文件的完整性要求的业务，可以设置该参数。
+  * `secret`，用于提供用户密钥，图片类空间若设置过[缩略图版本号](http://wiki.upyun.com/index.php?title=如何创建自定义缩略图)，
+     即可使用原图保护功能（**文件类空间无效**）。 原图保护功能需要设置一个自定义的密钥（只有您自己知道，如上面的`secret`）。
+     待文件保存成功后，将无法根据`http://空间名.b0.upaiyun.com/文件名`直接访问上传的文件，
+     而是需要在 URL 后面加上`缩略图间隔标志符+密钥`进行访问。
+     比如当[缩略图间隔标志符](http://wiki.upyun.com/index.php?title=如何使用自定义缩略图)为`!`，密钥为`secret`，
+     上传的文件路径为`/dir/sample.jpg`，那么该图片访问 URL 为: `http://空间名.b0.upaiyun.com/dir/sample.jpg!secret`，
+     若原图保护密钥若与[缩略图版本号](http://wiki.upyun.com/index.php?title=如何创建自定义缩略图)名称相同，
+     则在对外访问时将被视为是缩略图功能，而原图将无法访问，请慎重使用。
+  * `otype`，用于指定文件类型，当待上传的文件扩展名不存在，或扩展名不足以判断文件的`Content-Type`时，允许用户自己设置文件的`Content-Type`值。
+     又拍云存储默认使用文件名的扩展名进行自动设置。
+
+
+##### 其他说明
+* 具体用户希望上传到又拍云空间的 **文件内容将从用户向`Nginx`发起的请求包体中获得**
+* 文件上传成功后，可直接通过`http://空间名.b0.upaiyun.com/文件名`来访问文件
+* 图片类空间上传文件后，函数会返回文件的基本信息，可通过`info`返回值来获取：
+
+```
+        info["width"]      // 图片宽度
+        info["height"]     // 图片高度
+        info["frames"]     // 图片帧数
+        info["file-type"]  // 图片类型
+```
+
+##### 注意事项
+* 如果空间内`savePath`已经存在文件，将进行覆盖操作，并且是**不可逆**的。所以如果需要避免文件被覆盖的情况，可以先通过[获取文件信息](#获取文件信息)操作来判断是否已经存在旧文件。
+* 图片类空间只允许上传图片类文件，其他文件上传时将返回“不是图片”的错误。
+* 如果上传失败，则会抛出异常。
