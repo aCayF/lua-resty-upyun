@@ -132,7 +132,6 @@ file-type : JPEG
 
 
 
-
 === TEST 4: upload image file with fix width
 --- http_config eval: $::HttpConfig
 --- config
@@ -172,7 +171,6 @@ height : 160
 file-type : JPEG
 --- no_error_log
 [error]
-
 
 
 
@@ -216,7 +214,6 @@ file-type : JPEG
 
 
 
-
 === TEST 6: upload image file with crop
 --- http_config eval: $::HttpConfig
 --- config
@@ -251,6 +248,45 @@ file-type : JPEG
 frames : 1
 width : 200
 height : 160
+file-type : JPEG
+--- no_error_log
+[error]
+
+
+
+=== TEST 7: upload image file with options
+--- http_config eval: $::HttpConfig
+--- config
+    location /t {
+        content_by_lua '
+            local yun = require "resty.upyun"
+            local config = {
+                            user = "acayf",
+                            passwd = "testupyun",
+                            endpoint = 0,
+                           }
+            local upyun = yun:new(config)
+
+            local gmkerl = nil
+            local options = { mkdir = true, md5 = true, secret = "secret", otype = "JPEG" }
+            local info, err = upyun:upload_file("/acayf-img/dir/sample", gmkerl, options)
+            if not info then
+                ngx.say("failed to upload image file : " .. err)
+                return
+            end
+
+            for k, v in pairs(info) do
+                ngx.say(k .. " : " .. v)
+            end
+        ';
+    }
+--- request eval
+"POST /t\n" . $::sample_jpg;
+--- timeout: 10s
+--- response_body
+frames : 1
+width : 400
+height : 320
 file-type : JPEG
 --- no_error_log
 [error]
