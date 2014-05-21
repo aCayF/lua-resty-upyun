@@ -245,7 +245,7 @@ local function _req_header(method, path, headers, extra)
     end
 
     -- Append extra
-    if extra then
+    if extra ~= {} then
         for key, value in pairs(extra) do
             insert(req, key .. ": " .. value .. "\r\n")
         end
@@ -404,17 +404,17 @@ end
 
 
 local function _parse_upyun_option(option, extra, content)
-    -- modified extra
-    local mkdir = option.mkdir
-    local md5 = option.md5
+    -- return modified extra
+    local mkdir = tostring(option.mkdir)
+    local omd5 = tostring(option.md5)
     local secret = option.secret
     local otype = option.type
 
     if mkdir == "true" or mkdir == "false" then
-        extra.Mkdir = mkdir
+        extra["Mkdir"] = mkdir
     end
 
-    if md5 == "true" then
+    if omd5 == "true" then
         extra["Content-MD5"] = md5(content)
     end
 
@@ -582,7 +582,8 @@ function _M.upload_file(self, path, gmkerl, option)
     local body = self.body
     local content = body.content
     local legal_path = "file"
-    local ret, err, extra
+    local extra = {}
+    local ret, err
 
     path, err = _format_path(path, legal_path)
     if not path then
@@ -590,7 +591,6 @@ function _M.upload_file(self, path, gmkerl, option)
     end
 
     if gmkerl and type(gmkerl) == "table" and gmkerl ~= {} then
-        extra = {}
         local ok, err = _parse_gmkerl(gmkerl, extra)
         if not ok then
             return nil, err
