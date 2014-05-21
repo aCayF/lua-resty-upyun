@@ -100,7 +100,7 @@ _**注：**建议大家根据服务器网络状况，手动设置合理的接入
                              mkdir = true, 
                              md5 = true, 
                              secret = "secret", 
-                             otype = "JPG"
+                             otype = "JPEG"
                             }
             local info, err = upyun:upload_file(savePath, gmkerl, options)
             if not info then
