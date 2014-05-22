@@ -245,7 +245,7 @@ local function _req_header(method, path, headers, extra)
     end
 
     -- Append extra
-    if extra ~= {} then
+    if extra ~= {} and extra ~= nil then
         for key, value in pairs(extra) do
             insert(req, key .. ": " .. value .. "\r\n")
         end
