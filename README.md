@@ -149,3 +149,34 @@ _**注：**建议大家根据服务器网络状况，手动设置合理的接入
 * 如果空间内`savePath`已经存在文件，将进行覆盖操作，并且是**不可逆**的。所以如果需要避免文件被覆盖的情况，可以先通过[获取文件信息](#获取文件信息)操作来判断是否已经存在旧文件。
 * 图片类空间只允许上传图片类文件，其他文件上传时将返回“不是图片”的错误。
 * 如果上传失败，则会抛出异常。
+
+<a name="下载文件"></a>
+### 下载文件
+
+```lua
+    location /t {
+        content_by_lua '
+            local yun = require "resty.upyun"
+            local config = {
+                            user = "acayf", --授权操作员名称
+                            passwd = "testupyun", --操作员密码
+                            endpoint = 0, --接入点
+                            author = "upyun" --认证方式
+                            }
+            local upyun = yun:new(config)
+
+            local savePath = "/acayf-img/sample.jpg"
+            local ok, err = upyun:download_file(savePath)
+            if not ok then
+                ngx.say("failed to downlod file : " .. err)
+                return
+            end
+        ';
+    }
+```
+
+##### 参数说明
+* `savePath`：又拍云存储中文件的具体保存地址。比如`/sample.jpg`。
+
+##### 注意事项
+* 下载文件时必须确保空间下存在该文件，否则将返回`文件不存在`错误
