@@ -290,3 +290,44 @@ height : 320
 file-type : JPEG
 --- no_error_log
 [error]
+
+
+
+=== TEST 8: download file
+--- ONLY
+--- http_config eval: $::HttpConfig
+--- config
+    location /t {
+        content_by_lua '
+            local yun = require "resty.upyun"
+            local config = {
+                            user = "acayf",
+                            passwd = "testupyun",
+                            endpoint = 0,
+                           }
+            local upyun = yun:new(config)
+
+            local ok, err = upyun:upload_file("/acayf-file/download.txt")
+            if not ok then
+                ngx.say("failed to upload image file : " .. err)
+                return
+            end
+
+            local file
+            file, err = upyun:download_file("/acayf-file/download.txt")
+            if not file then
+                ngx.say("failed to upload image file : " .. err)
+                return
+            end
+
+            ngx.say(file)
+        ';
+    }
+--- request
+POST /t
+Hello World
+--- timeout: 10s
+--- response_body
+Hello World
+--- no_error_log
+[error]
