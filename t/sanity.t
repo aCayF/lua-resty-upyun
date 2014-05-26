@@ -294,7 +294,6 @@ file-type : JPEG
 
 
 === TEST 8: download file
---- ONLY
 --- http_config eval: $::HttpConfig
 --- config
     location /t {
@@ -303,20 +302,19 @@ file-type : JPEG
             local config = {
                             user = "acayf",
                             passwd = "testupyun",
-                            endpoint = 0,
                            }
             local upyun = yun:new(config)
 
             local ok, err = upyun:upload_file("/acayf-file/download.txt")
             if not ok then
-                ngx.say("failed to upload image file : " .. err)
+                ngx.say("failed to upload file : " .. err)
                 return
             end
 
             local file
             file, err = upyun:download_file("/acayf-file/download.txt")
             if not file then
-                ngx.say("failed to upload image file : " .. err)
+                ngx.say("failed to download file : " .. err)
                 return
             end
 
