@@ -180,3 +180,42 @@ _**注：**建议大家根据服务器网络状况，手动设置合理的接入
 
 ##### 注意事项
 * 下载文件时必须确保空间下存在该文件，否则将返回`文件不存在`错误
+
+
+
+<a name="获取文件信息"></a>
+### 获取文件信息
+
+```lua
+    location /t {
+        content_by_lua '
+            local yun = require "resty.upyun"
+            local config = {
+                            user = "acayf", --授权操作员名称
+                            passwd = "testupyun", --操作员密码
+                            }
+            local upyun = yun:new(config)
+
+            local savePath = "/acayf-img/sample.jpg"
+            local info, err = upyun:get_fileinfo(savePath)
+            if not info then
+                ngx.say("failed to get file info : " .. err)
+                return
+            end
+        ';
+    }
+```
+
+##### 参数说明
+* `savePath`：又拍云存储中文件的具体保存地址。比如`/acayf-img/sample.jpg`。
+
+##### 其他说明
+* 最终返回的结果保存在`info`变量中，变量中包含了文件的“文件类型”、“文件大小”和“创建日期”信息
+
+```
+   * info["type"]; // 文件类型
+   * info["size"]; // 文件大小
+   * info["date"]; // 创建日期
+```
+
+* 若文件不存在，则抛出异常，请做好对结果的判断。
