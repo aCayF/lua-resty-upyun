@@ -329,3 +329,84 @@ Hello World
 Hello World
 --- no_error_log
 [error]
+
+
+
+=== TEST 9: get file info
+--- http_config eval: $::HttpConfig
+--- config
+    location /t {
+        content_by_lua '
+            local yun = require "resty.upyun"
+            local config = {
+                            user = "acayf",
+                            passwd = "testupyun",
+                           }
+            local upyun = yun:new(config)
+
+            local ok, err = upyun:upload_file("/acayf-file/getfileinfo.txt")
+            if not ok then
+                ngx.say("failed to upload file : " .. err)
+                return
+            end
+
+            local info 
+            info, err = upyun:get_fileinfo("/acayf-file/getfileinfo.txt")
+            if err then
+                ngx.say("failed to get file info : " .. err)
+                return
+            end
+
+            ngx.say("size : " .. info.size)
+            ngx.say("type : " .. info.type)
+        ';
+    }
+--- request
+POST /t
+Hello World
+--- timeout: 10s
+--- response_body
+size : 11
+type : file
+--- no_error_log
+[error]
+
+
+
+=== TEST 10: get image info
+--- http_config eval: $::HttpConfig
+--- config
+    location /t {
+        content_by_lua '
+            local yun = require "resty.upyun"
+            local config = {
+                            user = "acayf",
+                            passwd = "testupyun",
+                           }
+            local upyun = yun:new(config)
+
+            local ok, err = upyun:upload_file("/acayf-img/getimageinfo.jpg")
+            if not ok then
+                ngx.say("failed to upload image : " .. err)
+                return
+            end
+
+            local info 
+            info, err = upyun:get_fileinfo("/acayf-img/getimageinfo.jpg")
+            if err then
+                ngx.say("failed to get image info : " .. err)
+                return
+            end
+
+            ngx.say("size : " .. info.size)
+            ngx.say("type : " .. info.type)
+        ';
+    }
+--- request eval
+"POST /t\n" . $::sample_jpg;
+--- timeout: 10s
+--- response_body
+size : 21001
+type : file
+--- no_error_log
+[error]
