@@ -89,8 +89,6 @@ _**注：**建议大家根据服务器网络状况，手动设置合理的接入
             local config = {
                             user = "acayf", --授权操作员名称
                             passwd = "testupyun", --操作员密码
-                            endpoint = 0, --接入点
-                            author = "upyun" --认证方式
                             }
             local upyun = yun:new(config)
 
@@ -160,8 +158,6 @@ _**注：**建议大家根据服务器网络状况，手动设置合理的接入
             local config = {
                             user = "acayf", --授权操作员名称
                             passwd = "testupyun", --操作员密码
-                            endpoint = 0, --接入点
-                            author = "upyun" --认证方式
                             }
             local upyun = yun:new(config)
 
