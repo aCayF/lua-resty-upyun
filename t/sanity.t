@@ -410,3 +410,49 @@ size : 21001
 type : file
 --- no_error_log
 [error]
+
+
+
+=== TEST 11: remove file and dir
+--- http_config eval: $::HttpConfig
+--- config
+    location /t {
+        content_by_lua '
+            local yun = require "resty.upyun"
+            local config = {
+                            user = "acayf",
+                            passwd = "testupyun",
+                           }
+            local upyun = yun:new(config)
+
+            local options = {mkdir = true}
+            local gmkerl = nil
+            local ok, err = upyun:upload_file("/acayf-file/remove/remove.txt", gmkerl, options)
+            if not ok then
+                ngx.say("failed to upload file : " .. err)
+                return
+            end
+
+            ok, err = upyun:remove_file("/acayf-file/remove/remove.txt")
+            if not ok then
+                ngx.say("failed to remove file : " .. err)
+                return
+            end
+
+            ok, err = upyun:remove_file("/acayf-file/remove/")
+            if not ok then
+                ngx.say("failed to remove file : " .. err)
+                return
+            end
+
+            ngx.say("remove file and dir success")
+        ';
+    }
+--- request
+POST /t
+Hello World
+--- timeout: 10s
+--- response_body
+remove file and dir success
+--- no_error_log
+[error]
