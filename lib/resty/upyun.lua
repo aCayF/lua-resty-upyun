@@ -633,7 +633,6 @@ function _M.download_file(self, path)
     -- return file, err
     local headers = self.headers
     local author = headers.Authorization
-    local body = self.body
     local legal_path = "file"
     local ret, err
 
@@ -642,7 +641,7 @@ function _M.download_file(self, path)
         return nil, err
     end
 
-    ret, err = _upyun_request(self, "GET", path, headers, body)
+    ret, err = _upyun_request(self, "GET", path, headers)
     if not ret then
         return nil, err
     end
@@ -658,7 +657,6 @@ function _M.get_fileinfo(self, path)
     -- return info, err
     local headers = self.headers
     local author = headers.Authorization
-    local body = self.body
     local legal_path = "file"
     local ret, err
 
@@ -667,7 +665,7 @@ function _M.get_fileinfo(self, path)
         return nil, err
     end
 
-    ret, err = _upyun_request(self, "HEAD", path, headers, body)
+    ret, err = _upyun_request(self, "HEAD", path, headers)
     if not ret then
         return nil, err
     end
@@ -688,7 +686,6 @@ function _M.remove_file(self, path)
     -- return ok, err
     local headers = self.headers
     local author = headers.Authorization
-    local body = self.body
     local legal_path = "dir_or_file"
     local ret, err
 
@@ -697,7 +694,7 @@ function _M.remove_file(self, path)
         return nil, err
     end
 
-    ret, err = _upyun_request(self, "DELETE", path, headers, body)
+    ret, err = _upyun_request(self, "DELETE", path, headers)
     if not ret then
         return nil, err
     end
@@ -713,7 +710,6 @@ function _M.make_dir(self, path, option)
     -- return ok, err
     local headers = self.headers
     local author = headers.Authorization
-    local body = self.body
     local legal_path = "dir"
     local ret, err
 
@@ -727,7 +723,7 @@ function _M.make_dir(self, path, option)
         _parse_upyun_option(option, extra)
     end
 
-    ret, err = _upyun_request(self, "POST", path, headers, body, extra)
+    ret, err = _upyun_request(self, "POST", path, headers, nil, extra)
     if not ret then
         return nil, err
     end
@@ -743,7 +739,6 @@ function _M.read_dir(self, path)
     -- return items, err
     local headers = self.headers
     local author = headers.Authorization
-    local body = self.body
     local legal_path = "dir"
     local ret, err
 
@@ -752,7 +747,7 @@ function _M.read_dir(self, path)
         return nil, err
     end
 
-    ret, err = _upyun_request(self, "GET", path, headers, body)
+    ret, err = _upyun_request(self, "GET", path, headers)
     if not ret then
         return nil, err
     end
@@ -773,7 +768,6 @@ function _M.get_usage(self, path)
     -- return usage, err
     local headers = self.headers
     local author = headers.Authorization
-    local body = self.body
     local legal_path = "dir_or_file"
     local ret, err
 
@@ -784,7 +778,7 @@ function _M.get_usage(self, path)
 
     path = path .. "?usage"
 
-    ret, err = _upyun_request(self, "GET", path, headers, body)
+    ret, err = _upyun_request(self, "GET", path, headers)
     if not ret then
         return nil, err
     end
