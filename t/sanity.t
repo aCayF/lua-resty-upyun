@@ -487,3 +487,53 @@ GET /t
 make dir success
 --- no_error_log
 [error]
+
+
+
+=== TEST 13: read dir
+--- http_config eval: $::HttpConfig
+--- config
+    location /t {
+        content_by_lua '
+            local yun = require "resty.upyun"
+            local config = {
+                            user = "acayf",
+                            passwd = "testupyun",
+                           }
+            local upyun = yun:new(config)
+
+            local options = {mkdir = true}
+            local gmkerl = nil
+            local ok, err = upyun:upload_file("/acayf-file/readdir/readdir.txt", gmkerl, options)
+            if not ok then
+                ngx.say("failed to upload file : " .. err)
+                return
+            end
+
+            ok, err = upyun:make_dir("/acayf-file/readdir/dir/")
+            if not ok then
+                ngx.say("failed to make dir : " .. err)
+                return
+            end
+
+            local info
+            info, err = upyun:read_dir("/acayf-file/readdir/")
+            if not info then
+                ngx.say("failed to read dir : " .. err)
+                return
+            end
+
+            for _, v in pairs(info) do
+                ngx.say(v["name"] .. " : " .. v["type"] .. " " .. v["size"])
+            end
+        ';
+    }
+--- request
+POST /t
+Hello World
+--- timeout: 10s
+--- response_body
+dir : F 0
+readdir.txt : N 11
+--- no_error_log
+[error]
