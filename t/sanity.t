@@ -28,7 +28,7 @@ run_tests();
 
 __DATA__
 
-=== TEST 1: upload normal file 
+=== TEST 1: upload normal file
 --- http_config eval: $::HttpConfig
 --- config
     location /t {
@@ -350,7 +350,7 @@ Hello World
                 return
             end
 
-            local info 
+            local info
             info, err = upyun:get_fileinfo("/acayf-file/getfileinfo.txt")
             if err then
                 ngx.say("failed to get file info : " .. err)
@@ -391,7 +391,7 @@ type : file
                 return
             end
 
-            local info 
+            local info
             info, err = upyun:get_fileinfo("/acayf-img/getimageinfo.jpg")
             if err then
                 ngx.say("failed to get image info : " .. err)
@@ -454,5 +454,36 @@ Hello World
 --- timeout: 10s
 --- response_body
 remove file and dir success
+--- no_error_log
+[error]
+
+
+
+=== TEST 12: make dir
+--- http_config eval: $::HttpConfig
+--- config
+    location /t {
+        content_by_lua '
+            local yun = require "resty.upyun"
+            local config = {
+                            user = "acayf",
+                            passwd = "testupyun",
+                           }
+            local upyun = yun:new(config)
+
+            local ok, err = upyun:make_dir("/acayf-file/makedir/")
+            if not ok then
+                ngx.say("failed to make dir : " .. err)
+                return
+            end
+
+            ngx.say("make dir success")
+        ';
+    }
+--- request
+GET /t
+--- timeout: 10s
+--- response_body
+make dir success
 --- no_error_log
 [error]
