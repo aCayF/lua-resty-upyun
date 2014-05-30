@@ -537,3 +537,50 @@ dir : F 0
 readdir.txt : N 11
 --- no_error_log
 [error]
+
+
+
+=== TEST 14: get usage
+--- http_config eval: $::HttpConfig
+--- config
+    location /t {
+        content_by_lua '
+            local yun = require "resty.upyun"
+            local config = {
+                            user = "acayf",
+                            passwd = "testupyun",
+                           }
+            local upyun = yun:new(config)
+
+            local options = {mkdir = true}
+            local gmkerl = nil
+            local ok, err = upyun:upload_file("/acayf-file/usage/usage.txt", gmkerl, options)
+            if not ok then
+                ngx.say("failed to upload file : " .. err)
+                return
+            end
+
+            ok, err = upyun:make_dir("/acayf-file/usage/dir/")
+            if not ok then
+                ngx.say("failed to make dir : " .. err)
+                return
+            end
+
+            local info
+            info, err = upyun:get_usage("/acayf-file/usage/")
+            if not info then
+                ngx.say("failed to get usage : " .. err)
+                return
+            end
+
+            ngx.say(info)
+        ';
+    }
+--- request
+POST /t
+Hello World
+--- timeout: 10s
+--- response_body
+11
+--- no_error_log
+[error]
