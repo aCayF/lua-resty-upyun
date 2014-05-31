@@ -215,3 +215,68 @@ _**注：**建议大家根据服务器网络状况，手动设置合理的接入
 ```
 
 * 若文件不存在，则抛出异常，请做好对结果的判断。
+
+
+
+<a name="删除文件"></a>
+### 删除文件
+
+```lua
+    location /t {
+        content_by_lua '
+            local yun = require "resty.upyun"
+            local config = {
+                            user = "acayf", --授权操作员名称
+                            passwd = "testupyun", --操作员密码
+                            }
+            local upyun = yun:new(config)
+
+            local savePath = "/acayf-file/test.txt"
+            local ok, err = upyun:remove_file(savePath)
+            if not ok then
+                ngx.say("failed to remove file : " .. err)
+                return
+            end
+
+        ';
+    }
+```
+    
+##### 参数说明
+* `savePath`：又拍云存储中文件的具体保存地址。比如`/acayf-file/test.txt`。
+
+##### 其他说明
+* 删除文件时必须确保空间下存在该文件，否则将返回`文件不存在`的错误
+
+
+
+<a name="删除目录"></a>
+### 删除目录
+
+```lua
+    location /t {
+        content_by_lua '
+            local yun = require "resty.upyun"
+            local config = {
+                            user = "acayf", --授权操作员名称
+                            passwd = "testupyun", --操作员密码
+                            }
+            local upyun = yun:new(config)
+
+            local dir = "/acayf-file/test/"
+            local ok, err = upyun:remove_file(dir)
+            if not ok then
+                ngx.say("failed to remove dir : " .. err)
+                return
+            end
+
+        ';
+    }
+```
+
+##### 参数说明
+* `dir`：待删除的目录结构。比如`/acayf-file/test/`
+
+##### 其他说明
+* 该操作只能删除单级目录，不能一次性同时删除多级目录，比如当存在`/dir1/dir2/dir3/`目录时，不能试图只传递`/dir1/`来删除所有目录。
+* 若待删除的目录`dir`下还存在任何文件或子目录，将返回`不允许删除`的错误。比如当存在`/dir1/dir2/dir3/`目录时，将无法删除`/dir1/dir2/`目录。
