@@ -250,6 +250,35 @@ _**注：**建议大家根据服务器网络状况，手动设置合理的接入
 
 
 
+<a name="创建目录"></a>
+### 创建目录
+
+```lua
+    location /t {
+        content_by_lua '
+            local yun = require "resty.upyun"
+            local config = {
+                            user = "acayf", --授权操作员名称
+                            passwd = "testupyun", --操作员密码
+                            }
+            local upyun = yun:new(config)
+
+            local dir = "/acayf-file/test/"
+            local ok, err = upyun:make_dir(dir)
+            if not ok then
+                ngx.say("failed to make dir : " .. err)
+                return
+            end
+
+        ';
+    }
+```
+    
+##### 参数说明
+* `dir`：待创建的目录结构。比如`/acayf-file/test/`
+
+
+
 <a name="删除目录"></a>
 ### 删除目录
 
