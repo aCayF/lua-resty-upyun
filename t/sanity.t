@@ -471,7 +471,7 @@ remove file and dir success
                            }
             local upyun = yun:new(config)
 
-            local ok, err = upyun:make_dir("/acayf-file/makedir/", {mkdir = true})
+            local ok, err = upyun:make_dir("/acayf-file/makedir/dir/", {mkdir = true})
             if not ok then
                 ngx.say("failed to make dir : " .. err)
                 return
