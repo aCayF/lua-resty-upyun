@@ -263,8 +263,8 @@ _**注：**建议大家根据服务器网络状况，手动设置合理的接入
                             }
             local upyun = yun:new(config)
 
-            local dir = "/acayf-file/test/"
-            local ok, err = upyun:make_dir(dir)
+            local dir = "/acayf-file/dir/test/"
+            local ok, err = upyun:make_dir(dir, {mkdir = true})
             if not ok then
                 ngx.say("failed to make dir : " .. err)
                 return
@@ -275,7 +275,13 @@ _**注：**建议大家根据服务器网络状况，手动设置合理的接入
 ```
     
 ##### 参数说明
-* `dir`：待创建的目录结构。比如`/acayf-file/test/`
+* `dir`：待创建的目录结构。比如`/acayf-file/dir/test/`
+* `mkdir`：可选的`boolean`类型参数，表示当不存在父级目录时是否自动创建父级目录（只支持自动创建10级以内的父级目录）
+
+##### 其他说明
+* 待创建的目录路径必须以斜杠 `/` 结尾
+* 创建目录操作可在[上传文件](#上传文件)时一并完成，功能是相同的
+* 若空间相同目录下已经存在同名的文件，则将返回`不允许创建目录`的错误
 
 
 
