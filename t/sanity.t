@@ -584,3 +584,42 @@ Hello World
 11
 --- no_error_log
 [error]
+
+
+
+=== TEST 15: upload image file with thumbnail equals to fixwidth 
+--- http_config eval: $::HttpConfig
+--- config
+    location /t {
+        content_by_lua '
+            local yun = require "resty.upyun"
+            local config = {
+                            user = "acayf",
+                            passwd = "testupyun",
+                           }
+            local upyun = yun:new(config)
+
+            local gmkerl = {
+                            thumbnail = "fixwidth"
+                           }
+            local info, err = upyun:upload_file("/acayf-img/sample_thumbnail.jpg", gmkerl)
+            if not info then
+                ngx.say("failed to upload image file : " .. err)
+                return
+            end
+
+            for k, v in pairs(info) do
+                ngx.say(k .. " : " .. v)
+            end
+        ';
+    }
+--- request eval
+"POST /t\n" . $::sample_jpg;
+--- timeout: 10s
+--- response_body
+frames : 1
+width : 200
+height : 160
+file-type : JPEG
+--- no_error_log
+[error]
