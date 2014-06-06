@@ -35,52 +35,58 @@ local host_list = {
 }
 
 local gmkerl_format = {
-    type =   {
-               type = {
-                       "required",
-                       ["fix_width"]="allowed", ["fix_height"]="allowed",
-                       ["fix_width_or_height"]="allowed",
-                       ["fix_both"]="allowed", ["fix_max"]="allowed",
-                       ["fix_min"]="allowed", ["fix_scale"]="allowed"
-                      },
-               value = {
-                        "required",
-                        "([1-9][0-9]*)|([1-9][0-9]*x[1-9][0-9]*)"
-                       },
-               quality = {
-                          "optional",
-                          "[1-9][0-9]*"
+    type =      {
+                  type = {
+                          "required",
+                          ["fix_width"]="allowed", ["fix_height"]="allowed",
+                          ["fix_width_or_height"]="allowed",
+                          ["fix_both"]="allowed", ["fix_max"]="allowed",
+                          ["fix_min"]="allowed", ["fix_scale"]="allowed"
                          },
-               unsharp = {
-                          "optional",
-                          ["true"]="allowed", ["false"]="allowed"
+                  value = {
+                           "required",
+                           "([1-9][0-9]*)|([1-9][0-9]*x[1-9][0-9]*)"
+                          },
+                  quality = {
+                             "optional",
+                             "[1-9][0-9]*"
+                            },
+                  unsharp = {
+                             "optional",
+                             ["true"]="allowed", ["false"]="allowed"
+                            },
+                  ["exif-switch"] = {
+                                     "optional",
+                                     ["true"]="allowed", ["false"]="allowed"
+                                    }
+                },
+    thumbnail = {
+                  thumbnail = {
+                               "optional",
+                               "[A-Za-z0-9.]+"
+                              },
+                  ["exif-switch"] = {
+                                     "optional",
+                                     ["true"]="allowed", ["false"]="allowed"
+                                    }
+                },
+    rotate =    {
+                  rotate = {
+                            "required",
+                            ["auto"]="allowed", ["90"]="allowed",
+                            ["180"]="allowed", ["270"]="allowed"
+                           }
+                },
+    crop =      {
+                  crop = {
+                          "required",
+                          "[0-9]+,[0-9]+,[1-9][0-9]*,[1-9][0-9]*"
                          },
-               thumbnail = {
-                            "optional",
-                            "[A-Za-z0-9.]+"
-                           },
-               ["exif-switch"] = {
-                                  "optional",
-                                  ["true"]="allowed", ["false"]="allowed"
-                                 }
-             },
-    rotate = {
-               rotate = {
-                         "required",
-                         ["auto"]="allowed", ["90"]="allowed",
-                         ["180"]="allowed", ["270"]="allowed"
-                        }
-             },
-    crop =   {
-               crop = {
-                       "required",
-                       "[0-9]+,[0-9]+,[1-9][0-9]*,[1-9][0-9]*"
-                      },
-               ["exif-switch"] = {
-                                  "optional",
-                                  ["true"]="allowed", ["false"]="allowed"
-                                 }
-             }
+                  ["exif-switch"] = {
+                                     "optional",
+                                     ["true"]="allowed", ["false"]="allowed"
+                                    }
+                }
 }
 
 
