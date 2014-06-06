@@ -337,3 +337,61 @@ _**注：**建议大家根据服务器网络状况，手动设置合理的接入
 
 以下内容只是介绍“传递图片处理参数”的方法。
 
+<a name="缩略图"></a>
+### 缩略图
+
+```lua
+    location /t {
+        content_by_lua '
+            local yun = require "resty.upyun"
+            local config = {
+                            user = "acayf", --授权操作员名称
+                            passwd = "testupyun", --操作员密码
+                            }
+            local upyun = yun:new(config)
+
+            local savePath = "/acayf-img/sample_fixwidth.jpg"
+            local gmkerl = {
+                            type = "fix_width",
+                            value = 200,
+                            quality = 95,
+                            unsharp = true
+                           }
+            local options = {mkdir = true}
+            local info, err = upyun:upload_file(savePath, gmkerl, options)
+            if not info then
+                ngx.say("failed to upload image file : " .. err)
+                return
+            end
+
+            savePath = "/acayf-img/sample_thumbnail.jpg"
+            gmkerl = {
+                        thumbnail = "fixwidth"
+                     }
+            options = {mkdir = true}
+            info, err = upyun:upload_file(savePath, gmkerl, options)
+            if not info then
+                ngx.say("failed to upload image file : " .. err)
+                return
+            end
+        ';
+    }
+```
+
+##### 参数说明
+* `savePath`：要保存到又拍云存储的具体地址
+  * 比如`/acayf-img/sample_fixwidth.jpg`表示以`sample_fixwidth.jpg`为文件名保存到`/acayf-img`空间的根目录下；
+  * **注意`savePath`的路径必须是以`/`开始的**。
+* `gmkerl`：自定义组合的图片处理参数，现提供的参数有：
+  * `type`：缩略图类型，必须搭配缩略图参数值（`value`）使用，否则无效
+  * `value`：缩略图参数值，必须搭配缩略图类型（`type`）使用，否则无效
+  * `quality`：缩略图的质量，默认 95
+  * `unsharp`：缩略图的锐化，默认值为`true`，默认开启
+  * `thumbnail`：自定义缩略图版本号，需要通过[UPYUN后台](https://www.upyun.com/login.php)来创建和配置
+  * `crop`：[图片裁剪](#图片裁剪)
+  * `rotate`：[图片旋转](#图片旋转)
+* `mkdir`：可选的`boolean`类型参数，表示当不存在父级目录时是否自动创建父级目录（只支持自动创建10级以内的父级目录）
+
+##### 其他说明
+* 图片处理参数的具体使用方法，请参考[标准API上传文件](http://wiki.upyun.com/index.php?title=标准API上传文件)
+* 缩略图功能只能处理图片文件；若上传非图片文件且传递了图片处理参数时，将返回`不是图片`的错误
