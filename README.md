@@ -395,3 +395,41 @@ _**注：**建议大家根据服务器网络状况，手动设置合理的接入
 ##### 其他说明
 * 图片处理参数的具体使用方法，请参考[标准API上传文件](http://wiki.upyun.com/index.php?title=标准API上传文件)
 * 缩略图功能只能处理图片文件；若上传非图片文件且传递了图片处理参数时，将返回`不是图片`的错误
+
+
+
+<a name="图片裁剪"></a>
+### 图片裁剪
+
+```lua
+    location /t {
+        content_by_lua '
+            local yun = require "resty.upyun"
+            local config = {
+                            user = "acayf", --授权操作员名称
+                            passwd = "testupyun", --操作员密码
+                            }
+            local upyun = yun:new(config)
+
+            local savePath = "/acayf-img/sample_crop.jpg"
+            local gmkerl = {
+                            crop = "0,0,200,160"
+                           }
+            local options = {mkdir = true}
+            local info, err = upyun:upload_file(savePath, gmkerl, options)
+            if not info then
+                ngx.say("failed to upload image file : " .. err)
+                return
+            end
+        ';
+    }
+```
+
+##### 参数说明
+* `savePath`：要保存到又拍云存储的具体地址
+* `gmkerl`：自定义组合的图片处理参数
+ * `crop`：裁剪参数，接受`x,y,width,height`格式的参数
+* `mkdir`：可选的`boolean`类型参数，表示当不存在父级目录时是否自动创建父级目录（只支持自动创建10级以内的父级目录）
+
+##### 其他说明
+* 具体裁剪参数的说明可参考[图片裁剪](http://wiki.upyun.com/index.php?title=图片裁剪)
