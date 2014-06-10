@@ -472,3 +472,28 @@ _**注：**建议大家根据服务器网络状况，手动设置合理的接入
 
 ##### 其他说明
 * 具体裁剪参数的说明可参考[图片裁剪](http://wiki.upyun.com/index.php?title=图片裁剪)
+
+
+
+<a name="错误代码表"></a>
+## 错误代码表
+
+| HTTP状态码 |  返回代码  |  描述   |
+| ------------ | ---------- | ---------- |
+| 400 | Bad Request | 错误请求(如 URL 缺少空间名) |
+| 401 | Unauthorized | 访问未授权 |
+| 401 | Sign error | 签名错误(操作员和密码,或签名格式错误) |
+| 401 | Need Date Header | 发起的请求缺少 Date 头信息 |
+| 401 | Date offset error | 发起请求的服务器时间错误，请检查服务器时间是否与世界时间一致|
+| 403 | Not Access | 权限错误(如非图片文件上传到图片空间)|
+| 403 | File size too max | 单个文件超出大小(100Mb 以内) |
+| 403 | Not a Picture File | 图片类空间错误码，非图片文件或图片文件格式错误。针对图片空间只允许上传 jpg/png/gif/bmp/tif 格式。|
+| 403 | Picture Size too max | 图片类空间错误码，图片尺寸太大。针对图片空间，图片总像素在 200000000 以内。|
+| 403 | Bucket full | 空间已用满 |
+| 403 | Bucket blocked | 空间被禁用,请联系管理员|
+| 403 | User blocked | 操作员被禁用|
+| 403 | Image Rotate Invalid Parameters | 图片旋转参数错误|
+| 403 | Image Crop Invalid Parameters | 图片裁剪参数错误|
+| 404 | Not Found | 获取文件或目录不存在；上传文件或目录时上级目录不存在|
+| 406 | Not Acceptable(path) | 目录错误（创建目录时已存在同名文件；或上传文件时存在同名目录)|
+| 503 | System Error | 系统错误 |
