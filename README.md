@@ -398,6 +398,45 @@ _**注：**建议大家根据服务器网络状况，手动设置合理的接入
 
 
 
+<a name="图片旋转"></a>
+### 图片旋转
+
+```lua
+    location /t {
+        content_by_lua '
+            local yun = require "resty.upyun"
+            local config = {
+                            user = "acayf", --授权操作员名称
+                            passwd = "testupyun", --操作员密码
+                            }
+            local upyun = yun:new(config)
+
+            local savePath = "/acayf-img/sample_rotate.jpg"
+            local gmkerl = {
+                            rotate = 90
+                           }
+            local options = {mkdir = true}
+            local info, err = upyun:upload_file(savePath, gmkerl, options)
+            if not info then
+                ngx.say("failed to upload image file : " .. err)
+                return
+            end
+        ';
+    }
+```
+
+##### 参数说明
+* `savePath`：要保存到又拍云存储的具体地址
+* `gmkerl`：自定义组合的图片处理参数
+ * `rotate`：旋转参数
+* `mkdir`：可选的`boolean`类型参数，表示当不存在父级目录时是否自动创建父级目录（只支持自动创建10级以内的父级目录）
+
+##### 其他说明
+* 旋转参数暂时只接受`auto`，`90`，`180`，`270`四种参数，其中`auto`处理时需要图片包含`EXIF`信息
+* 具体旋转参数的说明可参考[图片旋转](http://wiki.upyun.com/index.php?title=图片旋转)
+
+
+
 <a name="图片裁剪"></a>
 ### 图片裁剪
 
