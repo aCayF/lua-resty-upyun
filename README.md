@@ -318,6 +318,74 @@ _**注：**建议大家根据服务器网络状况，手动设置合理的接入
 
 
 
+<a name="获取目录文件列表"></a>
+### 获取目录文件列表
+
+```lua
+    location /t {
+        content_by_lua '
+            local yun = require "resty.upyun"
+            local config = {
+                            user = "acayf", --授权操作员名称
+                            passwd = "testupyun", --操作员密码
+                           }
+            local upyun = yun:new(config)
+
+            local dir = "/acayf-file/test/"
+            local info, err = upyun:read_dir(dir)
+            if not info then
+                ngx.say("failed to read dir : " .. err)
+                return
+            end
+        ';
+    }
+```
+
+##### 参数说明
+* `dir`：待获取文件列表的目录。比如`/acayf-file/test/`
+
+##### 其他说明
+* 可以循环获取`info`中文件的“名称”、“类型”（文件或目录）、“文件大小”和“最后修改时间”
+ * `info[1].name`，第一个文件的名字
+ * `info[1].type`，第一个文件的类型，`N`表示普通文件，`F`表示文件夹
+ * `info[1].size`，第一个文件的大小
+ * `info[1].lastmodified`，第一个文件的最后修改时间
+* `info[2]`包含第二个文件的信息，以此类推
+
+
+
+<a name="获取使用量情况"></a>
+### 获取使用量情况
+
+```lua
+    location /t {
+        content_by_lua '
+            local yun = require "resty.upyun"
+            local config = {
+                            user = "acayf", --授权操作员名称
+                            passwd = "testupyun", --操作员密码
+                           }
+            local upyun = yun:new(config)
+
+            local dir = "/acayf-file/test/"
+            local info, err = upyun:get_usage(dir)
+            if not info then
+                ngx.say("failed to get usage : " .. err)
+                return
+            end
+        ';
+    }
+```
+
+##### 参数说明
+* `dir`：待获取使用量的目录。比如`/acayf-file/test/`
+
+##### 其他说明
+* 使用量的单位为 `byte`，比如`1M`的使用量将以`1048576`这样的数字返回
+* 整个空间的使用量等效于`/`根目录的使用量
+
+
+
 <a name="图片处理接口"></a>
 ## 图片处理接口
 对于图片的自定义处理，又拍云存储支持以下两种方式：
